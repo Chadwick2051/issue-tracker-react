@@ -1,7 +1,8 @@
 import axios from "axios";
 import { useEffect,useState } from "react";
 import { useParams,useNavigate } from "react-router-dom";
-import _ from "lodash";
+import _, { assign } from "lodash";
+import { CommentItem } from './CommentItem';
 
 
 function BugEditor({auth, showSuccess, showError}) {
@@ -9,6 +10,7 @@ function BugEditor({auth, showSuccess, showError}) {
   // const [description, setDescription] = useState("");
   // const [stepsToReproduce, setStepsToReproduce] = useState("");
   // const [classification, setClassification] = useState("");
+  const [newComment, setNewComment] = useState("")
 
   const {bugId} = useParams()
   const navigate = useNavigate()
@@ -21,7 +23,6 @@ function BugEditor({auth, showSuccess, showError}) {
       headers:{authorization: `Bearer ${auth?.token}`}
     }).then((res) => {
       setBug(res.data)
-      console.log(bug)
     }).catch((err) =>{
       const resError = err?.response?.data?.error;
           if (resError) {
@@ -34,7 +35,6 @@ function BugEditor({auth, showSuccess, showError}) {
               showError(joiError);
             }
           }
-      
     });
   },[bugId,auth])
 
@@ -98,6 +98,31 @@ function BugEditor({auth, showSuccess, showError}) {
     }
   }
 
+  const onAddComment = async evt => {
+
+    try{
+      const res = await axios.put(`${process.env.REACT_APP_API_URL}/api/bugs/${bugId}/comment/new`,{
+        comment: newComment,
+      },{headers:{authorization: `Bearer ${auth?.token}`}})
+      showSuccess('Comment Added')
+      navigate(`/bug/${bug._id}`)
+      }catch(err){
+        console.log(err)
+        const resError = err?.response?.data?.error;
+  
+        if(resError){
+          if(typeof resError==='string'){
+            showError(resError)
+          }else if(resError.details){
+            //joi validation
+            let joiError = ''
+            _.map(resError.details, (x) => joiError += (x.message + '\n'))
+            showError(joiError)
+          }
+        }
+      }
+    }
+
   return (
       <div className='container'>
          <h1>Bug Id: {bugId} </h1>
@@ -136,8 +161,33 @@ function BugEditor({auth, showSuccess, showError}) {
               </select>
             </div>
           </div>
+          {/* <div className="form-group row my-3 mx-1">
+            <label htmlFor="assignTxt" className="col-sm-2 col-form-label fw-semibold">Input User ID to assign this bug to:</label>
+            <div className="col-sm-10">
+              <input type="text" id="assignTxt" className="form-control" placeholder="User Id" onChange={(evt) => setAssignedId(evt.currentTarget.value)} value={assignedId}/>
+            </div>
+          </div> */}
           <button type="submit" className="btn btn-dark btn-lg btn-block" value='updateBug' onClick={(evt) => onUpdateBug(evt)}>Update Bug</button>
           </form>
+          <div className="py-5">
+            <h3>Comments</h3>
+            <div className="row">
+           {bug.userComments && _.map(bug.userComments, (comment, index) => (
+                            <CommentItem comment={comment} auth={auth} key={bug.userComments._id} index={index}/>
+                            ))}
+            </div>
+          <form>
+          <div className="form-group row my-3 mx-1">
+            <label htmlFor="commentTxt" className="col-sm-2 col-form-label fw-semibold">Add A Comment</label>
+            <div className="col-sm-10">
+              <input type="text" id="commentTxt" className="form-control" placeholder="Your comment" onChange={(evt) => setNewComment(evt.currentTarget.value)} value={newComment}/>
+            </div>
+          </div>
+          <div className="ps-3">
+           <button type="submit" className="btn btn-dark btn-sm btn-block" value='addComment' onClick={(evt) => onAddComment(evt)}>Add Comment</button> 
+           </div>
+           </form>
+          </div>
       </div>
 
   )

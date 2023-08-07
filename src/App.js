@@ -8,6 +8,8 @@ import UserList from "./components/UserList";
 import UserEditor from "./components/UserEditor";
 import NavBar from "./components/NavBar";
 import Footer from "./components/Footer";
+import { ReportBug } from "./components/ReportBug";
+import './App.scss';
 import { NotFound } from "./components/NotFound";
 import { useState,useEffect } from "react";
 import { Route, Routes, useNavigate } from "react-router-dom";
@@ -51,6 +53,7 @@ function App() {
 
   function onLogout(){
     setAuth(null);
+    localStorage.removeItem("authToken");
     navigate('/');
   }
 
@@ -71,6 +74,7 @@ function App() {
               <Route path='/' element={<LoginForm onLogin={onLogin} showError={showError} showSuccess={showSuccess}/>} />
               <Route path='/bug/list' element={<BugList auth={auth} showError={showError} />} />
               <Route path='/user/register' element={<RegisterForm showSuccess={showSuccess} onLogin={onLogin} showError={showError}/>} />
+              <Route path='/bug/report' element={<ReportBug auth={auth} showError={showError} showSuccess={showSuccess}/>} />
               <Route path='/bug/:bugId' element={<BugEditor auth={auth} showSuccess={showSuccess} showError={showError}/>} />
               <Route path='/user/list' element={<UserList auth={auth} showError={showError}/>} />
               <Route path='/user/:userId' element={<UserEditor auth={auth} showSuccess={showSuccess} showError={showError}/>} />

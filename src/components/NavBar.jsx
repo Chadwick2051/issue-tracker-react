@@ -8,7 +8,7 @@ function NavBar({auth, onLogout, showSuccess}) {
   }
 
   return (
-    <nav className="navbar navbar-expand-lg bg-body-tertiary">
+    <nav className="navbar navbar-expand-lg border border-secondary rounded bg-secondary-emphasis">
           <div className="container-fluid">
             <NavLink className="navbar-brand" to="/">Bug Tracker</NavLink>
             <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -22,6 +22,11 @@ function NavBar({auth, onLogout, showSuccess}) {
                 {auth &&
                 <li className="nav-item">
                   <NavLink to="/bug/list" className='nav-link'>Bug List</NavLink>
+                </li>
+                }
+                {auth &&
+                <li className="nav-item">
+                  <NavLink to="/bug/report" className='nav-link'>New Bug</NavLink>
                 </li>
                 }
                 {auth &&

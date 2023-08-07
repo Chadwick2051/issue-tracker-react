@@ -9,6 +9,8 @@ export function BugItem({bug,auth,index}) {
       <td>{bug.classification}</td>
       <td>{bug.closed.toString()}</td>
       <td>{moment(bug.createdOn).fromNow()}</td>
+      <td>{bug.assignedTo.fullName}</td>
+      <td>{bug.bugAuthor.fullName}</td>
       {auth.payload.permissions.canEditAnyUser &&
         <td><Link to={`/bug/${bug._id}`} className="btn btn-sm btn-warning">Edit Bug</Link></td>
       }
