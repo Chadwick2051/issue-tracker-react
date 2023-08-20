@@ -11,10 +11,10 @@ function LoginForm({onLogin, showSuccess, showError}) {
   // const [error, setError] = useState("");
   // const [success, setSuccess] = useState("");
 
-  const emailError = !email ? 'Email can not be left blank' :
-  !email.includes('@') ? 'Email must include an @ sign' : '';
+  const emailError = !email ? 'can not be left blank' :
+  !email.includes('@') ? 'be a valid email' : '';
 
-  const passwordError = !password ? 'password can not be left blank' :
+  const passwordError = !password ? 'can not be left blank' :
   !password.length > 8 ? 'password must be 8 or more characters long' : '';
 
   async function onSubmitLogin(evt){
@@ -80,12 +80,12 @@ function LoginForm({onLogin, showSuccess, showError}) {
                   <h5 className="fw-normal mb-3 pb-3" style={{letterSpacing: "1px"}}>Sign into your account</h5>
 
                   <div className="form-outline mb-4">
-                    <label htmlFor="txtEmail" className="form-label">Email address</label>
+                    <label htmlFor="txtEmail" className="form-label">Email address {emailError && <span className="text-danger">{emailError}</span>}</label>
                     <input type="email" id="txtEmail" className="form-control form-control-lg" placeholder="Enter email" autoComplete="email" onChange={(evt)=> setEmail(evt.currentTarget.value)} value={email} />
                   </div>
 
                   <div className="form-outline mb-4">
-                    <label htmlFor="txtPassword" className="form-label">Password</label>
+                    <label htmlFor="txtPassword" className="form-label">Password {passwordError && <span className="text-danger"> {passwordError}</span>}</label>
                     <input type="password" id="txtLogin" className="form-control form-control-lg" placeholder="Enter email" autoComplete="password" onChange={(evt)=> setPassword(evt.currentTarget.value)} value={password} />
                   </div>
 
@@ -97,9 +97,7 @@ function LoginForm({onLogin, showSuccess, showError}) {
                   <button type="button" id='btnSubmit' className="btn btn-dark btn-lg btn-block" onClick={(evt => onSubmitLogin())}>Login</button>
                   </div><div className="pt-1 mb-4">
                   <p className="mb-5 pb-lg-2" style={{color: "#393f81"}}>Don't have an account? 
-                  <Link to="user/register" style={{color: "#393f81"}}>Register here</Link></p>
-                  {emailError && <p className="text-danger">{emailError}</p>}
-                  {passwordError && <p className="text-danger">{passwordError}</p>}
+                  <Link to={'http://localhost:3000' + '/user/register'} style={{color: "#393f81"}}>Register here</Link></p>
                   </div>
                 </form>
 

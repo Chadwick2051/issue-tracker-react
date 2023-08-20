@@ -9,6 +9,7 @@ import UserEditor from "./components/UserEditor";
 import NavBar from "./components/NavBar";
 import Footer from "./components/Footer";
 import { ReportBug } from "./components/ReportBug";
+import LandingPage from './components/LandingPage'
 import './App.scss';
 import { NotFound } from "./components/NotFound";
 import { useState,useEffect } from "react";
@@ -71,7 +72,8 @@ function App() {
           <NavBar auth={auth} onLogout={onLogout} showSuccess={showSuccess} />
             <main className='flex-grow-1'>
               <Routes>
-              <Route path='/' element={<LoginForm onLogin={onLogin} showError={showError} showSuccess={showSuccess}/>} />
+              <Route path='/' element={<LandingPage onLogin={onLogin} showError={showError} showSuccess={showSuccess}/>} />
+              <Route path='/login' element={<LoginForm onLogin={onLogin} showError={showError} showSuccess={showSuccess}/>} />
               <Route path='/bug/list' element={<BugList auth={auth} showError={showError} />} />
               <Route path='/user/register' element={<RegisterForm showSuccess={showSuccess} onLogin={onLogin} showError={showError}/>} />
               <Route path='/bug/report' element={<ReportBug auth={auth} showError={showError} showSuccess={showSuccess}/>} />

@@ -38,7 +38,7 @@ function NavBar({auth, onLogout, showSuccess}) {
               <ul className='navbar-nav'>
                 {!auth && 
                   <li className="nav-item">
-                    <NavLink to="/" className='nav-link'>Login</NavLink>
+                    <NavLink to="/login" className='nav-link'>Login</NavLink>
                   </li>
                 }
                 {auth &&

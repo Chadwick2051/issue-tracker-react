@@ -105,6 +105,30 @@ function UserEditor({auth, showError, showSuccess}) {
       }
     }
   }
+  const deleteUser = async evt => {
+    evt.preventDefault();
+    try{
+      const res = await axios.delete(`${process.env.REACT_APP_API_URL}/api/users/${userId}`,{
+      },{headers:{authorization: `Bearer ${auth?.token}`}});
+      navigate('/user/list');
+      console.log(res)
+      showSuccess(res.data.success)
+    }catch(err){
+      console.log(err)
+      const resError = err?.response?.data?.error;
+
+      if(resError){
+        if(typeof resError==='string'){
+          showError(resError)
+        }else if(resError.details){
+          //joi validation
+          let joiError = ''
+          _.map(resError.details, (x) => joiError += (x.message + '\n'))
+          showError(joiError)
+        }
+      }
+    }
+  }
 
   return (
 
@@ -134,15 +158,6 @@ function UserEditor({auth, showError, showSuccess}) {
             </div>
           </div>
           {auth.payload.permissions.canAssignRoles && <>
-
-            {/* {_.map(user?.role, (role,index)=> (
-              <div className="form-check">
-              <input className="form-check-input" type="checkbox" value={role} id={role} checked={user?.role.includes({role})} onChange={(evt)=>roleUpdate(evt)}/>
-              <label className="form-check-label" htmlFor={role}>
-                {role}
-              </label>
-            </div>
-            ))} */}
             <div className="form-check">
               <input className="form-check-input" type="checkbox" value='developer' id="chkDeveloper" checked={user?.role?.includes('developer') || false} onChange={(evt)=>roleUpdate(evt)}/>
               <label className="form-check-label" htmlFor="chkDeveloper">
@@ -175,7 +190,9 @@ function UserEditor({auth, showError, showSuccess}) {
             </div>
             </>}
             <br />
-          <button type="submit" className="btn btn-dark btn-lg btn-block" value='updateBug' onClick={(evt) => updateUser(evt)}>Update User</button>
+
+          <button type="submit" className="btn btn-dark btn-lg btn-block float-start" value='updateBug' onClick={(evt) => updateUser(evt)}>Update User</button>
+          <button type="submit" className="btn btn-danger btn-lg btn-block float-end" value='updateBug' onClick={(evt) => deleteUser(evt)}>Delete User</button>
           </form>
       </div>
   )

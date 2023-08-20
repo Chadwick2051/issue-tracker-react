@@ -1,16 +1,14 @@
 import axios from "axios";
 import { useEffect,useState } from "react";
 import { useParams,useNavigate } from "react-router-dom";
-import _, { assign } from "lodash";
+import _, { forEach } from "lodash";
 import { CommentItem } from './CommentItem';
 
 
 function BugEditor({auth, showSuccess, showError}) {
-  // const [title, setTitle] = useState("");
-  // const [description, setDescription] = useState("");
-  // const [stepsToReproduce, setStepsToReproduce] = useState("");
-  // const [classification, setClassification] = useState("");
+
   const [newComment, setNewComment] = useState("")
+  const [users,setUsers] = useState(null)
 
   const {bugId} = useParams()
   const navigate = useNavigate()
@@ -36,6 +34,26 @@ function BugEditor({auth, showSuccess, showError}) {
             }
           }
     });
+
+    axios(`${process.env.REACT_APP_API_URL}/api/users/list`, {
+      headers: { authorization: `Bearer ${auth?.token}` },
+    })
+      .then((res) => {
+        setUsers(res.data);
+      })
+      .catch((err) => {
+        const resError = err?.response?.data?.error;
+        if (resError) {
+          if (typeof resError === "string") {
+            showError(resError);
+          } else if (resError.details) {
+            //joi validation
+            let joiError = "";
+            _.map(resError.details, (x) => (joiError += x.message + "\n"));
+            showError(joiError);
+          }
+        }
+      });
   },[bugId,auth])
 
   const initialBugClassification = bug?.classification || 'nothing'
@@ -69,6 +87,28 @@ function BugEditor({auth, showSuccess, showError}) {
       classification:newClassification
     }))
   }
+  function editAssignTo(evt) {
+  //   console.table(bug)
+  //   console.table(users)
+  //   const newAssignedTo = evt.target.value;
+  //   let newAssignedToUser = {};
+  //   users.forEach((user)=>{
+  //     if (user.fullName === newAssignedTo) {
+  //       newAssignedToUser.fullName = user.fullName;
+  //       newAssignedToUser._id = user._id;
+  //       newAssignedToUser.role = user.role;
+  //     }
+  //   });
+  //   console.table(newAssignedToUser)
+  //   setBug((prevBug)=> ({
+  //     ...prevBug,
+  //     assignedTo: {
+  //       fullName: newAssignedToUser.fullName,
+  //       _id: newAssignedToUser._id,
+  //       role: newAssignedToUser.role
+  //     }
+  //   }))
+  }
   const onUpdateBug = async evt => {
     evt.preventDefault();
 
@@ -77,7 +117,8 @@ function BugEditor({auth, showSuccess, showError}) {
       title:bug.title,
       stepsToReproduce: bug.stepsToReproduce,
       description: bug.description,
-      classification: bug.classification
+      classification: bug.classification,
+      // assignedTo:bug.assignedTo
     },{headers:{authorization: `Bearer ${auth?.token}`}})
     navigate('/bug/list')
     showSuccess('Bug Saved')
@@ -161,12 +202,19 @@ function BugEditor({auth, showSuccess, showError}) {
               </select>
             </div>
           </div>
-          {/* <div className="form-group row my-3 mx-1">
-            <label htmlFor="assignTxt" className="col-sm-2 col-form-label fw-semibold">Input User ID to assign this bug to:</label>
+          <div className="form-group row my-3 mx-1">
+            <h5>Assign A User:</h5>
+            <label htmlFor="assignTxt" className="col-sm-2 col-form-label fw-semibold">Assign User</label>
             <div className="col-sm-10">
-              <input type="text" id="assignTxt" className="form-control" placeholder="User Id" onChange={(evt) => setAssignedId(evt.currentTarget.value)} value={assignedId}/>
+              <select value={bug?.assignedTo?.fullName} className="form-select" aria-label="Default select example" onChange={(evt)=>editAssignTo(evt)}>
+              {_.map(users, (user,index)=> (
+                <option value={user?.fullName} key={user._id}>
+                  {user.fullName}
+                </option>
+              ))}
+              </select>
             </div>
-          </div> */}
+          </div>
           <button type="submit" className="btn btn-dark btn-lg btn-block" value='updateBug' onClick={(evt) => onUpdateBug(evt)}>Update Bug</button>
           </form>
           <div className="py-5">

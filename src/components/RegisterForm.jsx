@@ -121,7 +121,7 @@ function RegisterForm({onLogin, showSuccess, showError}) {
       <div className="Row">
         <span className="text-danger">{error}</span>
         <p className="mb-5 pb-lg-2" style={{color: "#393f81"}}>Already have an account? 
-        <Link to="/" style={{color: "#393f81"}}>Sign In</Link></p>
+        <Link to="/login" style={{color: "#393f81"}}>Sign In</Link></p>
       </div>
       
     </form>
