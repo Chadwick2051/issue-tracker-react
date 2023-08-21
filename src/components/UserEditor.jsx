@@ -107,6 +107,7 @@ function UserEditor({auth, showError, showSuccess}) {
   }
   const deleteUser = async evt => {
     evt.preventDefault();
+    console.log(auth)
     try{
       const res = await axios.delete(`${process.env.REACT_APP_API_URL}/api/users/${userId}`,{
       },{headers:{authorization: `Bearer ${auth?.token}`}});

@@ -88,26 +88,27 @@ function BugEditor({auth, showSuccess, showError}) {
     }))
   }
   function editAssignTo(evt) {
-  //   console.table(bug)
-  //   console.table(users)
-  //   const newAssignedTo = evt.target.value;
-  //   let newAssignedToUser = {};
-  //   users.forEach((user)=>{
-  //     if (user.fullName === newAssignedTo) {
-  //       newAssignedToUser.fullName = user.fullName;
-  //       newAssignedToUser._id = user._id;
-  //       newAssignedToUser.role = user.role;
-  //     }
-  //   });
-  //   console.table(newAssignedToUser)
-  //   setBug((prevBug)=> ({
-  //     ...prevBug,
-  //     assignedTo: {
-  //       fullName: newAssignedToUser.fullName,
-  //       _id: newAssignedToUser._id,
-  //       role: newAssignedToUser.role
-  //     }
-  //   }))
+    console.table(bug)
+    console.table(users)
+    const newAssignedTo = evt.target.value;
+    let newAssignedToUser = {};
+    users.forEach((user)=>{
+      if (user.fullName === newAssignedTo) {
+        newAssignedToUser.fullName = user.fullName;
+        newAssignedToUser._id = user._id;
+        newAssignedToUser.role = user.role;
+      }
+    });
+    console.table(newAssignedToUser)
+    setBug((prevBug)=> ({
+      ...prevBug,
+      assignedTo: {
+        fullName: newAssignedToUser.fullName,
+        _id: newAssignedToUser._id,
+        role: newAssignedToUser.role
+      }
+    }))
+
   }
   const onUpdateBug = async evt => {
     evt.preventDefault();
@@ -119,6 +120,9 @@ function BugEditor({auth, showSuccess, showError}) {
       description: bug.description,
       classification: bug.classification,
       // assignedTo:bug.assignedTo
+    },{headers:{authorization: `Bearer ${auth?.token}`}})
+    const res2 = await axios.put(`${process.env.REACT_APP_API_URL}/api/bugs/${bugId}/assign`,{
+      assignedUserId:bug.assignedTo._id
     },{headers:{authorization: `Bearer ${auth?.token}`}})
     navigate('/bug/list')
     showSuccess('Bug Saved')
